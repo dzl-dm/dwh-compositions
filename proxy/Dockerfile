@@ -16,6 +16,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 ENV TZ=${TZ:-'Europe/Berlin'}
 ENV DOMAIN_LIST=${BROWSER_FQDN:-localhost}
 ENV CERTBOT_EMAIL=${ADMIN_EMAIL:-admin@localhost}
+ENV USE_LE_SSL=${USE_LE_SSL:-False}
 ## Cometar env's
 ENV BROWSER_FQDN=${BROWSER_FQDN:-localhost}
 ENV COMETAR_WEB_SERVER=${WEB_SERVER:-http://cometar.web}

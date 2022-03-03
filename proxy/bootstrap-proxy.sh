@@ -48,7 +48,7 @@ if [ ! -e /etc/nginx/auth/.htpasswd_api ]; then
 fi
 
 ## Initial run of certbot if its required (not localhost or already setup)
-[ ${DOMAIN_LIST} = localhost ] || [ -f /etc/letsencrypt/live/${BROWSER_FQDN}/fullchain.pem ] ||
+[ ${USE_LE_SSL} != True ] || [ ${DOMAIN_LIST} = localhost ] || [ -f /etc/letsencrypt/live/${BROWSER_FQDN}/fullchain.pem ] ||
       ( certbot certonly --standalone --agree-tos -m ${CERTBOT_EMAIL} -n -d ${DOMAIN_LIST} &&
       echo "PATH=$PATH" > /etc/cron.d/certbot-renew  &&
       echo "@weekly certbot renew --nginx >> /var/log/cron.log 2>&1" >>/etc/cron.d/certbot-renew &&

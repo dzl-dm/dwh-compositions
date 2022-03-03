@@ -21,7 +21,7 @@ Out of the box, this should deploy a functional installation of both i2b2 and co
 docker-compose up -d
 ```
 
-We strongly recommend changing the passwords stored in `.env-secrets` before deployment. Additionally, you must [change the user passwords](#change-default-passwords) for i2b2 once the application is running 
+We strongly recommend changing the passwords stored in `.env-secrets` before deployment. Additionally, you must [change the user passwords](https://github.com/dzl-dm/i2b2#change-default-passwords) for i2b2 once the application is running 
 
 ## Adjust your .env
 The directory has a `.env` file which is used by docker to put environment variables into the containers. It also allows the `docker-compose` process to use them which can aid deployments. The `.env` provided covers a range of variables i2b2 and CoMetaR can use, most of which will not need changing. For setting up on a remote server, the relevant fields should be changed.
