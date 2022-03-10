@@ -38,3 +38,9 @@ After a short while, the composition of containers should be running and a basic
 Please see the README's for the two respective projects in github:
 * [i2b2](https://github.com/dzl-dm/i2b2)
 * [CoMetaR](https://github.com/dzl-dm/cometar)
+
+## Divergence
+There are some areas of divergance from the standalone applications.
+
+### Access controls
+We have moved all `htpasswd` based access controls into the single proxy (named, by default, `dwh.proxy`), meaning you must enter that proxy container to make changes to the htaccess files, but the rest of the process remains the same.
