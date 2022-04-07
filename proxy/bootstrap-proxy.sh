@@ -29,7 +29,7 @@ if [ "$I2B2_API_ALLOW_RANGE" != "" ]; then
   for range in $I2B2_API_ALLOW_RANGE; do
     TEMP_ALLOW_RANGE=$(echo "${TEMP_ALLOW_RANGE}allow ${range};")
   done
-  export API_ALLOW_RANGE="${TEMP_ALLOW_RANGE}"
+  export I2B2_API_ALLOW_RANGE="${TEMP_ALLOW_RANGE}"
   echo "NginX rest allow directive: ${I2B2_API_ALLOW_RANGE}"
 fi
 IFS=$ORIG_IFS

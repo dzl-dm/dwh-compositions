@@ -28,6 +28,6 @@ ENV COMETAR_FUSEKI_SERVER=${FUSEKI_SERVER:-http://cometar.fuseki:3030}
 ENV COMETAR_BROWSER_FUSEKI_PATH=${BROWSER_FUSEKI_PATH:-/fuseki}
 ## i2b2 env's
 ENV I2B2_WEB_SERVER=${WEB_SERVER:-http://i2b2.web}
-ENV I2B2_API_SERVER=${REST_SERVER:-http://i2b2.api:5000}
+ENV I2B2_API_SERVER=${I2B2_API_SERVER:-http://i2b2.api:5000}
 
 CMD [ "sh", "-c", "/bootstrap.sh && cron && nginx -g 'daemon off;'" ]
