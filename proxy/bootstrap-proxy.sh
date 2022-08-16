@@ -53,8 +53,8 @@ fi
 ## Initial run of certbot if its required (not localhost or already setup)
 [ ${USE_LE_SSL} != True ] || [ ${DOMAIN_LIST} = localhost ] || [ -f /etc/letsencrypt/live/${BROWSER_FQDN}/fullchain.pem ] ||
       ( certbot certonly --standalone --agree-tos -m ${CERTBOT_EMAIL} -n -d ${DOMAIN_LIST} &&
-      >&2 echo "PATH=$PATH" > /etc/cron.d/certbot-renew  &&
-      >&2 echo "@weekly certbot renew --nginx >> /var/log/cron.log 2>&1" >>/etc/cron.d/certbot-renew &&
+      echo "PATH=$PATH" > /etc/cron.d/certbot-renew  &&
+      echo "@weekly certbot renew --nginx >> /var/log/cron.log 2>&1" >>/etc/cron.d/certbot-renew &&
       crontab /etc/cron.d/certbot-renew ) ||
       >&2 echo "Something went wrong with the LetsEncrypt certificate setup, please check the details you've entered!"
 
