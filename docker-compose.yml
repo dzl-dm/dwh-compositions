@@ -3,6 +3,7 @@ version: '3'
 volumes:
   i2b2-db:
   cometar-repository:
+  cometar-provenance:
   auth:
   letsencrypt:
 
@@ -107,6 +108,7 @@ services:
     image: ${IMAGE_NAMESPACE}/cometar/cometar-rest:${COMETAR_VERSION:-DWH_VERSION}
     volumes:
       - cometar-repository:/update-hook-repository:ro
+      - cometar-provenance:/var/lib/cometar/provenance
     depends_on:
       - "cometar-fuseki"
   cometar-fuseki:
