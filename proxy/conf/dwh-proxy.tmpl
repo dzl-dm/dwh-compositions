@@ -30,7 +30,7 @@ server {
         proxy_set_header   X-Forwarded-Host $server_name;
     }
 
-    location /git/ {
+    location /$COMETAR_GIT_PATH/ {
         proxy_pass         $COMETAR_GIT_SERVER/git/;
         proxy_set_header   Host $host;
         proxy_set_header   X-Real-IP $remote_addr;

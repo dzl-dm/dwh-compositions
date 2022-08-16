@@ -33,7 +33,10 @@ if [ "$I2B2_API_ALLOW_RANGE" != "" ]; then
   echo "NginX rest allow directive: ${I2B2_API_ALLOW_RANGE}"
 fi
 IFS=$ORIG_IFS
-envsubst "\$BROWSER_FQDN \$COMETAR_FUSEKI_SERVER \$COMETAR_FUSEKI_ADMIN_ALLOW_RANGE \$COMETAR_GIT_SERVER \$COMETAR_GIT_ALLOW_RANGE \$COMETAR_REST_SERVER \$COMETAR_REST_ALLOW_RANGE \$COMETAR_WEB_SERVER \$I2B2_API_SERVER \$I2B2_API_ALLOW_RANGE \$I2B2_WEB_SERVER" < /etc/nginx/conf.d/dwh-proxy.tmpl > /etc/nginx/conf.d/dwh.conf
+## Remove possible leading/trailing slashes
+export COMETAR_GIT_PATH=$(echo ${COMETAR_GIT_PATH#/})
+export COMETAR_GIT_PATH=$(echo ${COMETAR_GIT_PATH%/})
+envsubst "\$BROWSER_FQDN \$COMETAR_FUSEKI_SERVER \$COMETAR_FUSEKI_ADMIN_ALLOW_RANGE \$COMETAR_GIT_SERVER \$COMETAR_GIT_ALLOW_RANGE \$COMETAR_REST_SERVER \$COMETAR_REST_ALLOW_RANGE \$COMETAR_WEB_SERVER \$I2B2_API_SERVER \$I2B2_API_ALLOW_RANGE \$I2B2_WEB_SERVER \$COMETAR_GIT_PATH" < /etc/nginx/conf.d/dwh-proxy.tmpl > /etc/nginx/conf.d/dwh.conf
 
 ## Create auth file if doesn't already exist
 if [ ! -e /etc/nginx/auth/.htpasswd_git ]; then
