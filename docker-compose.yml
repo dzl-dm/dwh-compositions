@@ -11,10 +11,10 @@ services:
   dwh-proxy:
     container_name:
       dwh.proxy
-    # image: ${IMAGE_NAMESPACE}/i2b2/i2b2-proxy:${DWH_VERSION:-latest}
-    build:
-      context: ./proxy
-      dockerfile: Dockerfile
+    image: ${IMAGE_NAMESPACE}/dwh-compositions/dwh-compositions-proxy:${DWH_VERSION:-latest}
+    # build:
+    #   context: ./proxy
+    #   dockerfile: Dockerfile
     ports:
       - 80:80
       - 443:443
