@@ -58,10 +58,11 @@ fi
       crontab /etc/cron.d/certbot-renew ) ||
       echo "Something went wrong with the LetsEncrypt certificate setup, please check the details you've entered!"
 
-## Disable ssl if file doesn't exist - it'll cause nginx to fail!
+## Disable ssl if file/link doesn't exist - it'll cause nginx to fail!
 echo "Using FQDN: ${BROWSER_FQDN}"
 [ -f /etc/letsencrypt/live/${BROWSER_FQDN}/fullchain.pem ] ||
-  sed -i -E 's/^(\s*listen\s*443.*|\s*listen\s*\[::\]:443.*)$/#&/' /etc/nginx/conf.d/dwh.conf &&
-  sed -i -E 's/^(\s*ssl_certificate.*|\s*include \/etc\/nginx\/conf\.d\/ssl-settings\.inc.*)$/#&/' /etc/nginx/conf.d/dwh.conf
+[ -L /etc/letsencrypt/live/${BROWSER_FQDN}/fullchain.pem ] ||
+  (sed -i -E 's/^(\s*listen\s*443.*|\s*listen\s*\[::\]:443.*)$/#&/' /etc/nginx/conf.d/dwh.conf &&
+  sed -i -E 's/^(\s*ssl_certificate.*|\s*include \/etc\/nginx\/conf\.d\/ssl-settings\.inc.*)$/#&/' /etc/nginx/conf.d/dwh.conf)
 
 echo "---- END PROXY CONFIGURATION ----"
