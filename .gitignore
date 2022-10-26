@@ -1,4 +1,9 @@
-secrets/
+## Do not commit the files which a user is likely to edit.
+## This makes it easier to pull git updates and compare changes without breaking anything
+**secrets**
+!**/secrets
+!**/secrets/*-secrets.example
 .env
 .env-secrets
 i2b2meta_user_config.yaml
+docker-compose.yml

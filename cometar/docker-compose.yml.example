@@ -1,0 +1,55 @@
+version: '3'
+
+volumes:
+  cometar-repository:
+  cometar-provenance:
+  auth:
+  letsencrypt:
+
+services:
+  proxy:
+    container_name:
+      cometar.proxy
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-proxy:${COMETAR_VERSION:-latest}
+    ports:
+      - 80:80
+      - 443:443
+    env_file:
+      - .env
+    volumes:
+      - auth:/etc/nginx/auth
+      - letsencrypt:/etc/letsencrypt
+    depends_on:
+      - "cometar-web"
+  cometar-web:
+    container_name:
+      cometar.web
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-web:${COMETAR_VERSION:-latest}
+    env_file:
+      - .env
+    depends_on:
+      - "cometar-rest"
+      - "cometar-git"
+  cometar-git:
+    container_name:
+      cometar.git
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-git:${COMETAR_VERSION:-DWH_VERSION}
+    env_file:
+      - .env
+    volumes:
+      - cometar-repository:/git
+    depends_on:
+      - "cometar-rest"
+  cometar-rest:
+    container_name:
+      cometar.rest
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-rest:${COMETAR_VERSION:-DWH_VERSION}
+    volumes:
+      - cometar-repository:/update-hook-repository:ro
+      - cometar-provenance:/var/lib/cometar/provenance
+    depends_on:
+      - "cometar-fuseki"
+  cometar-fuseki:
+    container_name:
+      cometar.fuseki
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki:${COMETAR_VERSION:-DWH_VERSION}
