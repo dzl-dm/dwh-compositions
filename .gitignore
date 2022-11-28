@@ -4,6 +4,7 @@
 !**/secrets
 !**/secrets/*-secrets.example
 .env
+.env-proxy
 .env-secrets
 i2b2meta_user_config.yaml
 docker-compose.yml

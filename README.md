@@ -6,4 +6,4 @@ The Data Warehouse compositions are intended to help users deploy a data warehou
 
 [CoMetaR](https://github.com/dzl-dm/cometar) is a Collaborative Metadata Repository which was developed with medical concepts in mind
 
-Please visit each directory to see further information.
+Please visit each sub-directory to see further information.

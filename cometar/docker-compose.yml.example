@@ -30,10 +30,11 @@ services:
     depends_on:
       - "cometar-rest"
       - "cometar-git"
+      - "cometar-fuseki"
   cometar-git:
     container_name:
       cometar.git
-    image: ${IMAGE_NAMESPACE}/cometar/cometar-git:${COMETAR_VERSION:-DWH_VERSION}
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-git:${COMETAR_VERSION:-latest}
     env_file:
       - .env
     volumes:
@@ -43,7 +44,7 @@ services:
   cometar-rest:
     container_name:
       cometar.rest
-    image: ${IMAGE_NAMESPACE}/cometar/cometar-rest:${COMETAR_VERSION:-DWH_VERSION}
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-rest:${COMETAR_VERSION:-latest}
     volumes:
       - cometar-repository:/update-hook-repository:ro
       - cometar-provenance:/var/lib/cometar/provenance
@@ -52,4 +53,5 @@ services:
   cometar-fuseki:
     container_name:
       cometar.fuseki
-    image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki:${COMETAR_VERSION:-DWH_VERSION}
+    # image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki:${COMETAR_VERSION:-latest}
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki_ui:${COMETAR_VERSION:-latest}
