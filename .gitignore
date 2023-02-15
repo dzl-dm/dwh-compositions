@@ -8,3 +8,4 @@
 .env-secrets
 i2b2meta_user_config.yaml
 docker-compose.yml
+external-config
