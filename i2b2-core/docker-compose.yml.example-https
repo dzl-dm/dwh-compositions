@@ -41,7 +41,7 @@ services:
     image: nginxproxy/acme-companion:${ACME_COMPANION_VERSION:-latest}
     userns_mode: "host"
     environment:
-    - DEFAULT_EMAIL=admin@localhost
+    - DEFAULT_EMAIL=admin@example.com
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - acme-state:/etc/acme.sh:rw
@@ -66,10 +66,10 @@ services:
     networks:
       - edge-proxy
       - backend
-    volumes:
-      - ./external-config/i2b2-sso-t1-cert.pem:/etc/shibboleth/sp-signing-cert.pem
-      - ./external-config/i2b2-sso-t1-key.pem:/etc/shibboleth/sp-signing-key.pem
-      - ./external-config/i2b2-idp-metadata.xml:/etc/shibboleth/idp-metadata.xml
+    # volumes:
+    #   - ./external-config/i2b2-sp-cert.pem:/etc/shibboleth/sp-signing-cert.pem
+    #   - ./external-config/i2b2-sp-key.pem:/etc/shibboleth/sp-signing-key.pem
+    #   - ./external-config/i2b2-idp-metadata.xml:/etc/shibboleth/idp-metadata.xml
     depends_on:
       - i2b2-wildfly
 
