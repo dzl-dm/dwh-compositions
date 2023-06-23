@@ -35,6 +35,16 @@ The directory has a `.env` file(s) which are used by docker to put environment v
 * VIRTUAL_HOST - set to the server Fully Quallified Domain Name (FQDN). The edge proxy uses this - the vars are applied to the application proxy only
 * LETSENCRYPT_HOST - set to the server Fully Quallified Domain Name (FQDN). The lets encrypt service uses this - the vars are applied to the application proxy only
 
+Please also consider changing the email address in the `docker-compose.yml` file to receive notification on your domain's certification status by changing:
+```yaml
+services:
+  ...
+  https-companion:
+    ...
+    environment:
+      - DEFAULT_EMAIL=noreply@example.com
+```
+
 ## Deploy containers
 Once all the settings are done, you can deploy the containers to your system. This follows regular docker commands so no special setup should be needed. From the base directory of the project (where you have the `docker-compose.yml` file), run the following:
 ```sh
