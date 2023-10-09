@@ -4,50 +4,88 @@ volumes:
   cometar-repository:
   cometar-provenance:
   auth:
-  letsencrypt:
+
+networks:
+  edge-proxy:
+    external: true
+  cometar-backend:
 
 services:
-  proxy:
+  ## Third-party proxy
+  https-proxy:
+    container_name:
+      main.proxy
+    image: nginxproxy/nginx-proxy:${NGINX_PROXY_VERSION:-latest}
+    restart: unless-stopped
+    userns_mode: "host"
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: true
+    environment:
+     - TRUST_DOWNSTREAM_PROXY=false
+     - HTTPS_METHOD=nohttps
+    ports:
+      - 80:80
+    networks:
+      - edge-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      ## Allow CoMetaR's proxying to use / or /cometar/ paths
+      - ${PWD}/config/proxy/location_dwh_cometar:/etc/nginx/vhost.d/example.com_42099b4af021e53fd8fd4e056c2568d7c2e3ffa8_location:ro
+
+
+  ## Application services
+  ## CoMetaR's own routing/auth proxy
+  cometar-proxy:
     container_name:
       cometar.proxy
     image: ${IMAGE_NAMESPACE}/cometar/cometar-proxy:${COMETAR_VERSION:-latest}
-    ports:
-      - 80:80
-      - 443:443
     env_file:
       - .env
+      - .env-proxy-cometar
     volumes:
       - auth:/etc/nginx/auth
-      - letsencrypt:/etc/letsencrypt
+    networks:
+      - edge-proxy
+      - cometar-backend
     depends_on:
       - "cometar-web"
   cometar-web:
     container_name:
       cometar.web
     image: ${IMAGE_NAMESPACE}/cometar/cometar-web:${COMETAR_VERSION:-latest}
+    restart: unless-stopped
     env_file:
       - .env
+    networks:
+      - cometar-backend
     depends_on:
       - "cometar-rest"
-      - "cometar-git"
       - "cometar-fuseki"
   cometar-git:
     container_name:
       cometar.git
     image: ${IMAGE_NAMESPACE}/cometar/cometar-git:${COMETAR_VERSION:-latest}
+    restart: unless-stopped
     env_file:
       - .env
     volumes:
       - cometar-repository:/git
+    networks:
+      - cometar-backend
     depends_on:
       - "cometar-rest"
   cometar-rest:
     container_name:
       cometar.rest
     image: ${IMAGE_NAMESPACE}/cometar/cometar-rest:${COMETAR_VERSION:-latest}
+    restart: unless-stopped
+    tmpfs:
+      - /tmp
     volumes:
       - cometar-repository:/update-hook-repository:ro
       - cometar-provenance:/var/lib/cometar/provenance
+    networks:
+      - cometar-backend
     depends_on:
       - "cometar-fuseki"
   cometar-fuseki:
@@ -55,3 +93,7 @@ services:
       cometar.fuseki
     # image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki:${COMETAR_VERSION:-latest}
     image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki_ui:${COMETAR_VERSION:-latest}
+    restart: unless-stopped
+    networks:
+      - edge-proxy
+      - cometar-backend

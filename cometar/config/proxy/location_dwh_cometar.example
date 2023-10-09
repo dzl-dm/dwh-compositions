@@ -1,0 +1,7 @@
+## Redirect to default service
+location / {
+    proxy_pass http://example.com-42099b4af021e53fd8fd4e056c2568d7c2e3ffa8;
+}
+location /cometar/ {
+    proxy_pass http://example.com-42099b4af021e53fd8fd4e056c2568d7c2e3ffa8/;
+}
