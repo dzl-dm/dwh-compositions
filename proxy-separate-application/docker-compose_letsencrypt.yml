@@ -1,0 +1,53 @@
+version: '3'
+
+volumes:
+  ## For https-companion to store "configuration and state"
+  acme-state:
+  ## Shared volumes for NginX config and HTTPS certificates via LetsEncrypt
+  vhost:
+  certs:
+  html:
+
+networks:
+  edge-proxy:
+
+services:
+  ## Third-party proxy
+  https-proxy:
+    container_name:
+      main.proxy
+    image: nginxproxy/nginx-proxy:${NGINX_PROXY_VERSION:-latest}
+    userns_mode: "host"
+    environment:
+      - TRUST_DOWNSTREAM_PROXY=false
+      - SERVER_TOKENS=off
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: true
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - edge-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      ## Shared with https-companion
+      - certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d:rw
+      - html:/usr/share/nginx/html
+  ## Also use the https companion
+  https-companion:
+    container_name:
+      main.acme
+    image: nginxproxy/acme-companion:${ACME_COMPANION_VERSION:-latest}
+    userns_mode: "host"
+    environment:
+    - DEFAULT_EMAIL=${SERVER_ADMIN_EMAIL:-noreply@example.com}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme-state:/etc/acme.sh:rw
+      ## Shared with https-proxy
+      - certs:/etc/nginx/certs:rw
+      - vhost:/etc/nginx/vhost.d:rw
+      - html:/usr/share/nginx/html:rw
+    depends_on:
+      - "https-proxy"
