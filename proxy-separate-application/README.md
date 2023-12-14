@@ -8,14 +8,22 @@ The main aim of the proxy is to provide https termination, so we will not explai
 In each case, the deployment should be in its own directory, not in the same directory as your application(s)
 
 ### Using LetsEncrypt
-The definition itself requires no changes, but we recommend the following:
+The definition itself requires no changes, we recommend the following process...
 
-Copy the appropriate example definition with mathing `.env` file:
+[If working in a clone of the repository] Copy the appropriate example definition with matching `.env` file:
 ```sh
 cp docker-compose_letsencrypt.yml docker-compose.yml
 cp .letsencrypt.env .env
 ```
+[If you have application from other repositories] Download the two files from github. eg. From your "docker-compositions" directory (the parent of you application directory):
+```sh
+mkdir proxy
+wget -o proxy/docker-compose.yml https://raw.githubusercontent.com/dzl-dm/dwh-compositions/master/proxy-separate-application/docker-compose_letsencrypt.yml
+wget -o proxy/.env https://raw.githubusercontent.com/dzl-dm/dwh-compositions/master/proxy-separate-application/.letsencrypt.env
+```
 Now you only need to edit the `.env` file with your email address and the desired version of the proxy components (see [docker hub](https://hub.docker.com/u/nginxproxy) ("nginx-proxy" and "acme-companion")).
+
+> NOTE: The directory "proxy" can actually be placed anywhere and called anything, but it will affect the network name prefix needed later.
 
 #### Adjusting your application(s)
 There is a little work to do here and it must be done before deploying the proxy. You will need a short amount of downtime to redeploy everything in the right order after defining the new configurations.
@@ -89,25 +97,26 @@ Now you should have a 2 or more `docker-compose.yml` files, each in their own di
 * 1 for the proxy
 * 1 for each application (CoMetaR, i2b2, etc)
 eg:
+```
 docker-compositions/
-├── cometar
-│   ├── fuseki
-│   ├── fuseki_ui
-│   ├── git
-│   ├── proxy
-│   ├── rest
-│   └── web
-└── proxy
+├── cometar/
+│   ├── docker-compose.yml
+│   ├── .env
+│   └── <other files and directories>
+└── proxy/
+    ├── docker-compose.yml
+    └── .env
+```
 
 You should ensure no containers are running. eg:
 ```sh
-cd cometer
+cd cometar
 docker compose down
-## The volumes (and therefor data) remain unaffected
+## The volumes (and therefore data) remain unaffected
 ```
 Then you can (re)start both the application and proxy. eg:
 ```sh
-cd cometer
+cd cometar
 docker compose up -d
 cd ../proxy
 docker compose up -d
