@@ -25,8 +25,48 @@ Now you only need to edit the `.env` file with your email address and the desire
 
 > NOTE: The directory "proxy" can actually be placed anywhere and called anything, but it will affect the network name prefix needed later.
 
-#### Adjusting your application(s)
-There is a little work to do here and it must be done before deploying the proxy. You will need a short amount of downtime to redeploy everything in the right order after defining the new configurations.
+### Using manual certificates
+Maybe you work in more stringent conditions than domain verification or for other reasons have a certificate supplied by other means. Then we can let the proxy use this certificate through the following process.
+
+> NOTE: Work in progress
+
+[If working in a clone of the repository] Copy the appropriate example definition with matching `.env` file:
+```sh
+cp docker-compose_manual.yml docker-compose.yml
+cp .manual.env .env
+```
+[If you have application from other repositories] Download the two files from github. eg. From your "docker-compositions" directory (the parent of you application directory):
+```sh
+mkdir proxy
+wget -o proxy/docker-compose.yml https://raw.githubusercontent.com/dzl-dm/dwh-compositions/master/proxy-separate-application/docker-compose_manual.yml
+wget -o proxy/.env https://raw.githubusercontent.com/dzl-dm/dwh-compositions/master/proxy-separate-application/.manual.env
+```
+
+> NOTE: The directory "proxy" can actually be placed anywhere and called anything, but it will affect the network name prefix needed later.
+
+Now you may want to edit the `.env` file with your desired version of the proxy (see [docker hub](https://hub.docker.com/r/nginxproxy/nginx-proxy/tags)).
+You may also want to edit the `docker-compose.yml` file to adjust the directory used for certificates on the hosting server (the container directory must stay the same). eg:
+```yaml
+...
+services:
+  ## Third-party proxy
+  https-proxy:
+    ...
+    volumes:
+      ## Let user mount their certificates manually
+      - ${PWD}/certs/:/etc/nginx/certs:ro
+    ...
+```
+
+The proxy will use the domain name as the filename of the key and certificate, [see documentation](https://hub.docker.com/r/nginxproxy/nginx-proxy/tags). This means that you must upload your key and certificate (the full chain of root, intermediates and for your specific domain) to the server in the path defined in the `docker-compose.yml`, with names like:
+* my.domain.tld.key
+* my.domain.tld.crt
+* _OPTIONAL:_ my.domain.tld.chain.pem
+
+> NOTE: See NginX [docs on chains](https://nginx.org/en/docs/http/configuring_https_servers.html#chains) for more details about exactly how to prepare the certificate file. Your IT department should also be able provide you with the relevant files (certificate and chain/bundle) and even instructions for using with NginX, or the prepared certificate file.
+
+## Adjusting your application(s)
+Independent of the certificate method (Lets Encrypt or Manual), there is a little work to do here and it must be done before deploying the proxy. You will need a short amount of downtime to redeploy everything in the right order after defining the new configurations.
 
 The edits can be limited to the `docker-compose.yml` for each application which you are deploying, we will outline the changes with this assumption (The alternative is to move some of the changes into `.env` files, but you must make sure they only affect the appropriate container!)
 
@@ -92,7 +132,7 @@ services:
       - application-backend
 ```
 
-#### Re-deploying
+### Re-deploying
 Now you should have a 2 or more `docker-compose.yml` files, each in their own directory:
 * 1 for the proxy
 * 1 for each application (CoMetaR, i2b2, etc)
@@ -128,8 +168,3 @@ Now you can check the logs to see if the proxy or acme-companion are having any 
 docker logs --tail 45 -f main.acme
 docker logs --tail 45 -f main.proxy
 ```
-
-### Using manual certificates
-Maybe you work in more stringent conditions than domain verification or for other reasons have a certificate supplied by other means. Then we can let the proxy use this certificate through the following process.
-
-> NOTE: Work in progress

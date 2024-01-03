@@ -1,0 +1,33 @@
+version: '3'
+
+volumes:
+  ## Shared volumes for NginX config
+  vhost:
+  html:
+
+networks:
+  edge-proxy:
+
+services:
+  ## Third-party proxy
+  https-proxy:
+    container_name:
+      main.proxy
+    image: nginxproxy/nginx-proxy:${NGINX_PROXY_VERSION:-latest}
+    userns_mode: "host"
+    environment:
+      - TRUST_DOWNSTREAM_PROXY=false
+      - SERVER_TOKENS=off
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: true
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - edge-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      ## Let user mount their certificates manually
+      - ${PWD}/certs/:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
