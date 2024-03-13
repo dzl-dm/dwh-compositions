@@ -1,0 +1,33 @@
+version: 1
+disable_existing_loggers: true
+
+formatters:
+    standard:
+        format: "[%(asctime)s] {%(name)s:%(lineno)d (%(funcName)s)} %(levelname)s - %(message)s"
+        datefmt: "%Y-%m-%d %H:%M:%S"
+    error:
+        format: "%(levelname)s [%(asctime)s] <PID %(process)d:%(processName)s> %(name)s:%(lineno)d.%(funcName)s(): %(message)s"
+        datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+    console:
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: standard
+        stream: ext://sys.stderr
+
+root:
+    level: DEBUG
+    handlers: [console]
+    propogate: yes
+
+loggers:
+    <module>:
+        level: INFO
+        handlers: []
+        propogate: yes
+
+    main:
+        level: INFO
+        handlers: []
+        propogate: yes

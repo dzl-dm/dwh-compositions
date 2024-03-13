@@ -1,0 +1,167 @@
+<?xml version="1.0" ?><Bundle xmlns="http://hl7.org/fhir">
+	<meta>
+		<tag>
+			<system value="urn:local:/System/TODO"></system>
+			<code value="TODO"></code>
+		</tag>
+	</meta>
+	<type value="collection"></type>
+	<link>
+		<relation value="fhir-base"></relation>
+		<url value="urn:local:/"></url>
+	</link>
+	<entry>
+		<fullUrl value="urn:local:/Patient/1"></fullUrl>
+		<resource>
+			<Patient>
+				<id value="1"></id>
+				<identifier>
+					<value value="61a4dc48f5c80c8c532103fda76609e8777e1bbba607877ec6e2fd9492ca1166"></value>
+				</identifier>
+				<gender value="female"></gender>
+				<birthDate value="1970-01-01"></birthDate>
+			</Patient>
+		</resource>
+	</entry>
+	<entry>
+		<fullUrl value="urn:local:/Encounter/1"></fullUrl>
+		<resource>
+			<Encounter>
+				<id value="1"></id>
+				<identifier>
+					<value value="1"></value>
+				</identifier>
+				<status value="completed"></status>
+				<class>
+					<system value="http://terminology.hl7.org/CodeSystem/v3-ActCode"></system>
+					<code value="AMB"></code>
+				</class>
+				<subject>
+					<reference value="Patient/1"></reference>
+				</subject>
+				<period>
+					<start value="2000-01-01"></start>
+				</period>
+			</Encounter>
+		</resource>
+	</entry>
+	<entry>
+		<fullUrl value="urn:local:/Observation/1"></fullUrl>
+		<resource>
+			<Observation>
+				<id value="1"></id>
+				<status value="final"></status>
+				<code>
+					<coding>
+						<code value="CONCEPT:1"></code>
+					</coding>
+				</code>
+				<subject>
+					<reference value="Patient/1"></reference>
+				</subject>
+				<encounter>
+					<reference value="Encounter/1"></reference>
+				</encounter>
+				<effectiveDateTime value="2000-01-01"></effectiveDateTime>
+			</Observation>
+		</resource>
+	</entry>
+	<entry>
+		<fullUrl value="urn:local:/Observation/2"></fullUrl>
+		<resource>
+			<Observation>
+				<id value="2"></id>
+				<status value="final"></status>
+				<code>
+					<coding>
+						<code value="CONCEPT:2"></code>
+					</coding>
+				</code>
+				<subject>
+					<reference value="Patient/1"></reference>
+				</subject>
+				<encounter>
+					<reference value="Encounter/1"></reference>
+				</encounter>
+				<effectiveDateTime value="2000-01-01"></effectiveDateTime>
+			</Observation>
+		</resource>
+	</entry>
+    <entry>
+		<fullUrl value="urn:local:/Patient/2"></fullUrl>
+		<resource>
+			<Patient>
+				<id value="2"></id>
+				<identifier>
+					<value value="51a4dc48f5c80c8c532103fda76609e8777e1bbba607877ec6e2fd9492ca17b6"></value>
+				</identifier>
+				<gender value="male"></gender>
+				<birthDate value="1970-01-01"></birthDate>
+			</Patient>
+		</resource>
+	</entry>
+	<entry>
+		<fullUrl value="urn:local:/Encounter/2"></fullUrl>
+		<resource>
+			<Encounter>
+				<id value="2"></id>
+				<identifier>
+					<value value="2"></value>
+				</identifier>
+				<status value="completed"></status>
+				<class>
+					<system value="http://terminology.hl7.org/CodeSystem/v3-ActCode"></system>
+					<code value="AMB"></code>
+				</class>
+				<subject>
+					<reference value="Patient/2"></reference>
+				</subject>
+				<period>
+					<start value="2000-01-01"></start>
+				</period>
+			</Encounter>
+		</resource>
+	</entry>
+    <entry>
+		<fullUrl value="urn:local:/Observation/3"></fullUrl>
+		<resource>
+			<Observation>
+				<id value="3"></id>
+				<status value="final"></status>
+				<code>
+					<coding>
+						<code value="CONCEPT:3"></code>
+					</coding>
+				</code>
+				<subject>
+					<reference value="Patient/2"></reference>
+				</subject>
+				<encounter>
+					<reference value="Encounter/2"></reference>
+				</encounter>
+				<effectiveDateTime value="2000-01-02"></effectiveDateTime>
+			</Observation>
+		</resource>
+	</entry>
+	<entry>
+		<fullUrl value="urn:local:/Observation/4"></fullUrl>
+		<resource>
+			<Observation>
+				<id value="4"></id>
+				<status value="final"></status>
+				<code>
+					<coding>
+						<code value="CONCEPT:4"></code>
+					</coding>
+				</code>
+				<subject>
+					<reference value="Patient/2"></reference>
+				</subject>
+				<encounter>
+					<reference value="Encounter/2"></reference>
+				</encounter>
+				<effectiveDateTime value="2000-01-02"></effectiveDateTime>
+			</Observation>
+		</resource>
+	</entry>
+</Bundle>

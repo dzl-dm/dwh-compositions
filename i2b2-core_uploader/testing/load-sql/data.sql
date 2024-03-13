@@ -1,0 +1,6 @@
+DELETE FROM i2b2demodata.concept_dimension WHERE sourcesystem_cd='dwh_test';
+DELETE FROM i2b2demodata.modifier_dimension WHERE sourcesystem_cd='dwh_test';
+INSERT INTO i2b2demodata.concept_dimension(concept_path,concept_cd,name_char,update_date,download_date,import_date,sourcesystem_cd)VALUES('\i2b2\concepts\CONCEPT:1\','CONCEPT:1','Concept 1',current_timestamp,'2024-03-13 10:15:44.0',current_timestamp,'dwh_test');
+INSERT INTO i2b2demodata.concept_dimension(concept_path,concept_cd,name_char,update_date,download_date,import_date,sourcesystem_cd)VALUES('\i2b2\concepts\CONCEPT:2\','CONCEPT:2','Concept 2',current_timestamp,'2024-03-13 10:15:44.0',current_timestamp,'dwh_test');
+INSERT INTO i2b2demodata.concept_dimension(concept_path,concept_cd,name_char,update_date,download_date,import_date,sourcesystem_cd)VALUES('\i2b2\concepts\CONCEPT:3\','CONCEPT:3','Concept 3',current_timestamp,'2024-03-13 10:15:44.0',current_timestamp,'dwh_test');
+INSERT INTO i2b2demodata.concept_dimension(concept_path,concept_cd,name_char,update_date,download_date,import_date,sourcesystem_cd)VALUES('\i2b2\concepts\CONCEPT:4\','CONCEPT:4','Concept 4',current_timestamp,'2024-03-13 10:15:44.0',current_timestamp,'dwh_test');

@@ -1,0 +1,9 @@
+## Map sourcesystem_cd to encounter num multiplyer
+## sourcesystem_cd includes upload username in the form:
+## <upload username>_<source name>
+## Where "upload username" can be the api username of the uploader or the directory name to which they are uploading
+## and "source name" is the name of the id given when uploading the .xml data file
+source_multiplyer_map:
+  'test_UNKNOWN': 0
+  'test_new': 1
+  'test_test': 2
