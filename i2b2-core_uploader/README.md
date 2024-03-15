@@ -29,7 +29,7 @@ We provide sample config files here with defaults that work out of the box. This
 Once the configuration is complete, deploy the composition as below. If you make changes you can re-deploy with the same command.
 ```sh
 ## Optionally ensure database volume is removed for a clean start:
-docker volume rm i2b2-core_uploader_i2b2-db
+docker volume rm i2b2-core_uploader_i2b2-db i2b2-core_uploader_dwh-fhir-upload-data i2b2-core_uploader_i2b2-uploader-autoconf
 ## Deploy:
 docker compose up -d --force-recreate --build --remove-orphans
 ## Shutdown:
