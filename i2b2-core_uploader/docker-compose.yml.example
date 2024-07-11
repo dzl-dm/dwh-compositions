@@ -1,0 +1,110 @@
+version: "3"
+
+volumes:
+  i2b2-db:
+  dwh-fhir-upload-data:
+  i2b2-uploader-autoconf:
+
+networks:
+  edge-proxy:
+    ## This is created and managed by the "proxy-separate-application" composition
+    external: true
+    name: proxy-separate-application_edge-proxy
+  i2b2-backend:
+
+## i2b2-core, then our receiver
+services:
+  i2b2-web:
+    container_name:
+      i2b2.web
+    restart: on-failure:5
+    image: ${IMAGE_NAMESPACE}/i2b2-core/i2b2-web:v1.7.13-2
+    networks:
+      - edge-proxy
+      - i2b2-backend
+    env_file:
+      - .env
+      - .env-proxy-i2b2
+    depends_on:
+      - i2b2-wildfly
+  i2b2-wildfly:
+    container_name:
+      i2b2.wildfly
+    restart: on-failure:5
+    image: ${IMAGE_NAMESPACE}/i2b2-core/i2b2-wildfly:v1.7.13-2
+    networks:
+      - i2b2-backend
+    env_file:
+      - .env
+      - ./secrets/i2b2-secrets
+    depends_on:
+      - i2b2-database
+  i2b2-database:
+    container_name:
+      i2b2.database
+    image: ${IMAGE_NAMESPACE}/i2b2-core/i2b2-database:v1.7.13-2
+    # entrypoint: su - postgres sh -c 'cd /tmp/new-sql/; find . -type f -iname "*.sql" -exec psql -d i2b2 -f {} \;' && exec $@
+    # ports:
+    #   - 5432:5432
+    networks:
+      - i2b2-backend
+    volumes:
+      - i2b2-db:/var/lib/postgresql/data
+      - ${PWD}/testing/load-sql/:/tmp/new-sql/:ro
+    env_file:
+      - .env
+      - ./secrets/i2b2-secrets
+
+  ## Custom http based API for upload, delete, info, etc
+  i2b2-receiver-api:
+    container_name:
+      i2b2.receiver-api
+    image: ${IMAGE_NAMESPACE}/i2b2-upload-api/i2b2-api:v0.0.3-beta
+    networks:
+      - edge-proxy
+      - i2b2-backend
+    volumes:
+      ## Shared volume with processor container, for uploaded data
+      - dwh-fhir-upload-data:/datasources/:rw
+      ## "Config" for users
+      - ${PWD}/configuration/api_users.csv:/api/configuration/api_users.csv:ro
+    env_file:
+      - .env
+      - .env-proxy-i2b2-api
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: '1.00'
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 20s
+
+  ## The processor project to handle the more complex, specific tasks of verifying, transforming and integrating a fhir bundle into i2b2
+  i2b2-receiver-processor:
+    container_name:
+      i2b2.receiver-processor
+    image: ${IMAGE_NAMESPACE}/i2b2-upload-processor/i2b2-processor:v0.0.7-beta
+    volumes:
+      - dwh-fhir-upload-data:/datasources/:rw
+      - ${PWD}/configuration/:/app/configuration/:ro
+      - i2b2-uploader-autoconf:/app/auto-conf/:rw
+    networks:
+      - i2b2-backend
+    env_file:
+      - .env
+      - ./secrets/i2b2-secrets
+    depends_on:
+      - i2b2-database
+      - i2b2-receiver-api
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: '1.50'
+          memory: 4096M
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        window: 20s

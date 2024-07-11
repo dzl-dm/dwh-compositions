@@ -4,7 +4,7 @@
 !**/secrets
 !**/secrets/*-secrets.example
 **.env**
-!**.example.*
+!**.example*
 i2b2meta_user_config.yaml
 docker-compose.yml
 external-config
@@ -13,3 +13,4 @@ location_*
 !location_*.example
 htpasswd_*
 !htpasswd_*.example
+**/test*

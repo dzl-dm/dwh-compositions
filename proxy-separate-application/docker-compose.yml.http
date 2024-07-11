@@ -2,7 +2,6 @@ version: '3'
 
 volumes:
   ## Shared volumes for NginX config
-  vhost:
   html:
 
 networks:
@@ -18,6 +17,8 @@ services:
     environment:
       - TRUST_DOWNSTREAM_PROXY=false
       - SERVER_TOKENS=off
+      ## Optionally disable https (eg for localhost only testing)
+      - HTTPS_METHOD=nohttps
     labels:
       com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: true
     ports:
@@ -29,5 +30,6 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       ## Let user mount their certificates manually
       - ${PWD}/certs/:/etc/nginx/certs:ro
-      - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
+      - ${PWD}/config/proxy/location_dwh_git:/etc/nginx/vhost.d/${WEB_FQDN}_42099b4af021e53fd8fd4e056c2568d7c2e3ffa8_location:ro
+      - ${PWD}/config/proxy/location_dwh_upload-api:/etc/nginx/vhost.d/${WEB_FQDN}_357322ae39f93f572e23cd9edd3307e2ac5a321f_location:ro

@@ -5,27 +5,84 @@ volumes:
   cometar-repository:
   cometar-provenance:
   auth:
-  letsencrypt:
+
+networks:
+  edge-proxy:
+    ## This is created and managed by the "proxy-separate-application" composition
+    external: true
+    name: proxy-separate-application_edge-proxy
+  cometar-backend:
+  i2b2-backend:
 
 services:
-  dwh-proxy:
+  ## Third-party proxy is launched with a separate composition "proxy-separate-application"
+
+  ## Application services
+  ## CoMetaR's own routing/auth proxy
+  cometar-proxy:
     container_name:
-      dwh.proxy
-    image: ${IMAGE_NAMESPACE}/dwh-compositions/dwh-compositions-proxy:${DWH_VERSION:-latest}
-    # build:
-    #   context: ./proxy
-    #   dockerfile: Dockerfile
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - auth:/etc/nginx/auth
-      - letsencrypt:/etc/letsencrypt
+      cometar.proxy
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-proxy:${COMETAR_VERSION:-latest}
     env_file:
       - .env
+      - .env-proxy-cometar
+    volumes:
+      - auth:/etc/nginx/auth
+    networks:
+      - edge-proxy
+      - cometar-backend
     depends_on:
-      - i2b2-web
-      - cometar-web
+      - "cometar-web"
+  cometar-web:
+    container_name:
+      cometar.web
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-web:${COMETAR_VERSION:-latest}
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - cometar-backend
+    depends_on:
+      - "cometar-rest"
+      - "cometar-fuseki"
+  cometar-git:
+    container_name:
+      cometar.git
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-git:${COMETAR_VERSION:-latest}
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - cometar-repository:/git
+    networks:
+      - cometar-backend
+    depends_on:
+      - "cometar-rest"
+  cometar-rest:
+    container_name:
+      cometar.rest
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-rest:${COMETAR_VERSION:-latest}
+    restart: unless-stopped
+    tmpfs:
+      - /tmp
+    volumes:
+      - cometar-repository:/update-hook-repository:ro
+      - cometar-provenance:/var/lib/cometar/provenance
+    networks:
+      - cometar-backend
+    depends_on:
+      - "cometar-fuseki"
+  cometar-fuseki:
+    container_name:
+      cometar.fuseki
+    # image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki:${COMETAR_VERSION:-latest}
+    image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki_ui:${COMETAR_VERSION:-latest}
+    restart: unless-stopped
+    # env_file:
+    #   - .env-proxy-fuseki
+    networks:
+      - edge-proxy
+      - cometar-backend
 
   i2b2-web:
     container_name:
@@ -33,6 +90,10 @@ services:
     image: ${IMAGE_NAMESPACE}/i2b2/i2b2-web:${I2B2_VERSION:-latest}
     env_file:
       - .env
+      - .env-proxy-i2b2
+    networks:
+      - edge-proxy
+      - i2b2-backend
     depends_on:
       - i2b2-wildfly
   i2b2-wildfly:
@@ -42,6 +103,8 @@ services:
     env_file:
       - .env
       - ./secrets/i2b2-secrets
+    networks:
+      - i2b2-backend
     depends_on:
       - i2b2-database
   i2b2-database:
@@ -53,37 +116,5 @@ services:
     env_file:
       - .env
       - ./secrets/i2b2-secrets
-
-  cometar-web:
-    container_name:
-      cometar.web
-    image: ${IMAGE_NAMESPACE}/cometar/cometar-web:${COMETAR_VERSION:-latest}
-    env_file:
-      - .env
-    depends_on:
-      - "cometar-rest"
-      - "cometar-git"
-  cometar-git:
-    container_name:
-      cometar.git
-    image: ${IMAGE_NAMESPACE}/cometar/cometar-git:${COMETAR_VERSION:-latest}
-    env_file:
-      - .env
-    volumes:
-      - cometar-repository:/git
-    depends_on:
-      - "cometar-rest"
-  cometar-rest:
-    container_name:
-      cometar.rest
-    image: ${IMAGE_NAMESPACE}/cometar/cometar-rest:${COMETAR_VERSION:-latest}
-    volumes:
-      - cometar-repository:/update-hook-repository:ro
-      - cometar-provenance:/var/lib/cometar/provenance
-    depends_on:
-      - "cometar-fuseki"
-  cometar-fuseki:
-    container_name:
-      cometar.fuseki
-    # image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki:${COMETAR_VERSION:-latest}
-    image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki_ui:${COMETAR_VERSION:-latest}
+    networks:
+      - i2b2-backend

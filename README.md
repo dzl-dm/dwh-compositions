@@ -6,4 +6,6 @@ The Data Warehouse compositions are intended to help users deploy a data warehou
 
 [CoMetaR](https://github.com/dzl-dm/cometar) is a Collaborative Metadata Repository which was developed with medical concepts in mind
 
+To decouple and simplify transitioning between http/https (eg in dev vs production), we use the dockerized [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy) project. To further decouple that from the applications, it is run as a separate composition (see `proxy-separate-application` sub-directory) which should always be run, regardless of which constellation of services you want to deploy in your Data Warehouse.
+
 Please visit each sub-directory to see further information.

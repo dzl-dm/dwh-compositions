@@ -7,31 +7,13 @@ volumes:
 
 networks:
   edge-proxy:
+    ## This is created and managed by the "proxy-separate-application" composition
     external: true
+    name: proxy-separate-application_edge-proxy
   cometar-backend:
 
 services:
-  ## Third-party proxy
-  https-proxy:
-    container_name:
-      main.proxy
-    image: nginxproxy/nginx-proxy:${NGINX_PROXY_VERSION:-latest}
-    restart: unless-stopped
-    userns_mode: "host"
-    labels:
-      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: true
-    environment:
-     - TRUST_DOWNSTREAM_PROXY=false
-     - HTTPS_METHOD=nohttps
-    ports:
-      - 80:80
-    networks:
-      - edge-proxy
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      ## Allow CoMetaR's proxying to use / or /cometar/ paths
-      - ${PWD}/config/proxy/location_dwh_cometar:/etc/nginx/vhost.d/example.com_42099b4af021e53fd8fd4e056c2568d7c2e3ffa8_location:ro
-
+  ## Third-party proxy is launched with a separate composition "proxy-separate-application"
 
   ## Application services
   ## CoMetaR's own routing/auth proxy
@@ -94,6 +76,8 @@ services:
     # image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki:${COMETAR_VERSION:-latest}
     image: ${IMAGE_NAMESPACE}/cometar/cometar-fuseki_ui:${COMETAR_VERSION:-latest}
     restart: unless-stopped
+    # env_file:
+    #   - .env-proxy-fuseki
     networks:
       - edge-proxy
       - cometar-backend

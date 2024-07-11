@@ -89,3 +89,8 @@ You'll see the version tag at the end of the image name, the ID should have chan
 # Post install and further details
 Please see the README for the main project in github:
 * [CoMetaR](https://github.com/dzl-dm/cometar)
+
+# Known issues
+If using `cometar-proxy`, the system only works with no path eg http://localhost/, not http://localhost/cometar. This is because the client doesn't use the path, so is still trying to access http://localhost/fuseki not http://localhost/cometar/fuseki
+
+Currently, the easiest option is to proxy the fuseki component separately. Ultimately this could be fixed with a code change to use the path in the address bar, then the whole app is under the same path. The "proxy" element should also probably be absorbed into the "web" component. Git already follow this pattern and be available under /cometar/git in the above example.
