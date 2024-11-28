@@ -1,0 +1,48 @@
+@startuml
+footer Last update: 28.11.2024
+title NginX proxy: Default docker deployment
+
+cloud "Internet" {
+    [Client]
+  cloud "Lets Encrypt" {
+  }
+}
+
+node "Server" {
+  component "Proxy service" {
+    [NginX proxy]
+    database "Proxy certificates"
+    database "Proxy .well-known"
+    database "/etc/nginx/vhost.d/"
+    note left: Config including mounted volumes/files with custom rules
+    [ACME Companion]
+    ' [Proxy environment (docker env)]
+    ' note right: Includes additional config
+  }
+
+  component "Web App" {
+    ' [Application]
+    [Application environment (docker env)]
+    ' [Application config (docker volume)]
+    [...]
+  }
+}
+
+' User connection
+[Client] --> [NginX proxy] : User connection
+[NginX proxy] --> [Web App] : User connection
+
+' Proxy data use
+[NginX proxy] --> [Proxy certificates] : Reads
+[NginX proxy] --> [Proxy .well-known] : Reads
+[NginX proxy] --> [Application environment (docker env)] : Reads (for proxy routing config)
+[NginX proxy] --> [/etc/nginx/vhost.d/] : Reads/includes to auto-generate final config
+
+' ACME companion functionality
+[ACME Companion] --> [Lets Encrypt] : Requests
+[Lets Encrypt] --> [NginX proxy] : Reads (.well-known)
+[ACME Companion] --> [Proxy certificates] : Writes
+[ACME Companion] --> [Proxy .well-known] : Writes
+
+
+@enduml
